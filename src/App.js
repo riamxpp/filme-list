@@ -1,23 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import myList from "./Components/MoviesRequest";
 
 function App() {
+  const [dados, setDados] = React.useState(null);
+  const [img, setImg] = React.useState("");
+  const imageRef = React.useRef();
+
+  React.useEffect(() => {
+    // setDados({});
+    const loadingAll = async () => {
+      const data = await myList.getHomeList();
+      const imagem = await myList.getImageMovie(5);
+      setDados(data);
+      setImg(imagem);
+      console.log(imagem);
+      console.log(data);
+    };
+    loadingAll();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ul>
+        {dados &&
+          dados.map((item, index) => (
+            <li key={index}>
+              <h5>{item.categoria}</h5>
+              {item.itens.results.map((filme) => (
+                <div key={filme.id}>
+                  <span>
+                    {filme.title}
+                    {" --  "}
+                  </span>
+                  <img
+                    href={`https://image.tmdb.org/t/p/w300${filme.poster_path}`}
+                    alt={`${filme.title}`}
+                  />
+                </div>
+              ))}
+            </li>
+          ))}
+      </ul>
     </div>
   );
 }
